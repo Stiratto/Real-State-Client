@@ -1,10 +1,14 @@
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 function Navbar() {
+  const selectAuth = (state: any) => state.user;
+  const { currentUser } = useSelector(selectAuth);
+
   return (
     <nav
-      className=" shadow-md flex max-[410px]:flex-col max-[410px]:space-y-4 min-[430px]:flex-row
+      className="shadow-md flex max-[410px]:flex-col max-[410px]:space-y-4 min-[430px]:flex-row
     min-[430px]:space-y-0 items-center justify-between p-3 mx-auto"
     >
       <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
@@ -26,9 +30,18 @@ function Navbar() {
         <li className="hover:underline  text-slate-700">
           <Link to="/about">About</Link>
         </li>
-        <li className="hover:underline  text-slate-700">
-          <Link to="/signin">Sign In</Link>
-        </li>
+
+        <Link to="/profile">
+          {currentUser ? (
+            <img
+              src={currentUser.avatar}
+              alt="profile"
+              className="rounded-full h-7 w-7 object-cover"
+            ></img>
+          ) : (
+            <li className="hover:underline  text-slate-700">Sign In</li>
+          )}
+        </Link>
       </ol>
     </nav>
   );
