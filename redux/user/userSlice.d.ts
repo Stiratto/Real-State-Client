@@ -9,12 +9,12 @@ interface UserState {
 export const userSlice: import("@reduxjs/toolkit").Slice<
   UserState,
   {
-    signInStart: () => void;
-    signInSuccess: (payload: string) => void;
-    signInFailure: (payload: string) => void;
+    signInStart: () => AnyAction;
+    signInSuccess: (payload: string) => AnyAction;
+    signInFailure: (payload: string) => AnyAction;
   }
 >;
 
-export const signInStart: () => void;
-export const signInSuccess: (payload: string) => void;
-export const signInFailure: (payload: string) => void;
+export const signInStart: () => AnyAction;
+export const signInSuccess: (payload: string) => AnyAction;
+export const signInFailure: (payload: string) => AnyAction;
