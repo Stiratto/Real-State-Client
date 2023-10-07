@@ -3,6 +3,7 @@ import { FirebaseApp, initializeApp } from "firebase/app";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../../redux/user/userSlice.js";
 import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -48,9 +49,10 @@ const OAuth = () => {
     <button
       onClick={handleGoogleClick}
       type="button"
-      className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+      className="flex items-center justify-center gap-3 bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
     >
       Sign in with google
+      <FcGoogle />
     </button>
   );
 };
