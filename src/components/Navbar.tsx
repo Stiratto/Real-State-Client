@@ -31,17 +31,19 @@ function Navbar() {
           <Link to="/about">About</Link>
         </li>
 
-        <Link to="/profile">
-          {currentUser ? (
+        {currentUser ? (
+          <Link to="/profile">
             <img
               src={currentUser.avatar}
               alt="profile"
               className="rounded-full h-7 w-7 object-cover"
             ></img>
-          ) : (
-            <li className="hover:underline  text-slate-700">Sign In</li>
-          )}
-        </Link>
+          </Link>
+        ) : (
+          <li className="hover:underline text-slate-700">
+            <Link to="/signin">Sign In</Link>
+          </li>
+        )}
       </ol>
     </nav>
   );

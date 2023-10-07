@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { useRef, useState, useEffect } from "react";
 import { FirebaseApp, initializeApp } from "firebase/app";
+import { useNavigate } from "react-router-dom";
 
 import {
   getDownloadURL,
@@ -13,6 +14,9 @@ import {
   updateUserStart,
   updateUserFailure,
   updateUserSuccess,
+  deleteUserFailure,
+  deleteUserSuccess,
+  deleteUserStart,
 } from "../../redux/user/userSlice";
 
 import { useDispatch } from "react-redux";
@@ -47,7 +51,11 @@ function Profile() {
 
   const [updateSuccess, setUpdateSuccess] = useState(false);
 
+  const [confirmDeleteMessage, setConfirmDeleteMessage] = useState(false);
+
   // console.log(formData);
+
+  const navigateTo = useNavigate();
 
   // If avatar is updated, then change the previous avatar for the updated one
   useEffect(() => {
@@ -118,6 +126,32 @@ function Profile() {
     } catch (err: any) {
       dispatch(updateUserFailure(err.message));
     }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+
+      dispatch(deleteUserSuccess(data));
+      navigateTo("/signin");
+    } catch (err: any) {
+      dispatch(deleteUserFailure(err.message));
+    }
+  };
+
+  const confirmDelete = () => {
+    setConfirmDeleteMessage(true);
   };
 
   return (
@@ -194,7 +228,22 @@ function Profile() {
       </form>
 
       <div className="my-5 flex justify-between">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <div className="">
+          <span
+            onClick={confirmDelete}
+            className="text-red-700 cursor-pointer flex flex-col gap-5"
+          >
+            {confirmDeleteMessage ? (
+              <span onClick={handleDeleteUser} className="">
+                You sure you want to delete this account?
+                <br /> This action is not reversible.
+              </span>
+            ) : (
+              <></>
+            )}
+            Delete account
+          </span>
+        </div>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
 
