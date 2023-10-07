@@ -9,6 +9,14 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 
+import {
+  updateUserStart,
+  updateUserFailure,
+  updateUserSuccess,
+} from "../../redux/user/userSlice";
+
+import { useDispatch } from "react-redux";
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "real-estate-app-b87a0.firebaseapp.com",
@@ -22,18 +30,33 @@ const app: FirebaseApp = initializeApp(firebaseConfig);
 
 function Profile() {
   const fileRef = useRef<HTMLInputElement | null>(null);
+
   const selectAuth = (state: any) => state.user;
-  const { currentUser } = useSelector(selectAuth);
+
+  const { currentUser, loading, error } = useSelector(selectAuth);
+
   const [file, setFile] = useState(null);
+
   const [imgPerc, setImgPerc] = useState(0);
+
   const [fileUploadError, setFileUploadError] = useState(false);
+
   const [formData, setFormData] = useState({ avatar: currentUser.avatar });
 
+  const dispatch = useDispatch();
+
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  // console.log(formData);
+
+  // If avatar is updated, then change the previous avatar for the updated one
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
   }, [file]);
+
+  // Handle profile avatar upload
 
   const handleFileUpload = (file: any) => {
     const storage = getStorage(app);
@@ -53,19 +76,54 @@ function Profile() {
         error;
       },
       () => {
-        // Cuando la carga está completa, obtén la URL de descarga
+        // When the load is completed, get the download url
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setFormData({ ...formData, avatar: downloadURL });
-          setImgPerc(100); // Establece el progreso en 100% cuando está completo
+          setImgPerc(100);
         });
       }
     );
   };
 
+  // Handle inputs changes
+
+  const handleChange = (ev: any) => {
+    setFormData({ ...formData, [ev.target.id]: ev.target.value });
+  };
+
+  // Handle upload form  submit
+
+  const handleSubmit = async (ev: any) => {
+    ev.preventDefault();
+
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (err: any) {
+      dispatch(updateUserFailure(err.message));
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7 ">Profile</h1>
-      <form className="flex flex-col gap-5">
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <input
           onChange={(ev: any) => {
             setFile(ev.target.files[0]);
@@ -82,6 +140,7 @@ function Profile() {
           <img
             src={formData.avatar || currentUser.avatar}
             alt="profile"
+            referrerPolicy="no-referrer"
             onClick={() => {
               fileRef.current?.click();
             }}
@@ -107,22 +166,30 @@ function Profile() {
           type="text"
           placeholder="Username"
           id="username"
+          defaultValue={currentUser.username}
+          onChange={handleChange}
           className="border p-3 rounded-lg"
         />
         <input
           type="email"
           placeholder="Email"
+          defaultValue={currentUser.email}
+          onChange={handleChange}
           id="email"
           className="border p-3 rounded-lg"
         />
         <input
           type="password"
           placeholder="Password"
+          onChange={handleChange}
           id="password"
           className="border p-3 rounded-lg"
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          Update
+        <button
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
 
@@ -130,6 +197,11 @@ function Profile() {
         <span className="text-red-700 cursor-pointer">Delete account</span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
+
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-600">
+        {updateSuccess ? "Profile updated succesfully." : ""}
+      </p>
     </div>
   );
 }

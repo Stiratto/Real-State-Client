@@ -12,9 +12,15 @@ export const userSlice: import("@reduxjs/toolkit").Slice<
     signInStart: () => AnyAction;
     signInSuccess: (payload: string) => AnyAction;
     signInFailure: (payload: string) => AnyAction;
+    updateUserStart: () => AnyAction;
+    updateUserSuccess: (payload: string) => AnyAction;
+    updateUserFailure: (payload: string) => AnyAction;
   }
 >;
 
 export const signInStart: () => AnyAction;
 export const signInSuccess: (payload: string) => AnyAction;
 export const signInFailure: (payload: string) => AnyAction;
+export const updateUserStart: () => AnyAction;
+export const updateUserSuccess: (payload: string) => AnyAction;
+export const updateUserFailure: (payload: string) => AnyAction;
