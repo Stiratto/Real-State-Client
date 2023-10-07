@@ -17,6 +17,9 @@ import {
   deleteUserFailure,
   deleteUserSuccess,
   deleteUserStart,
+  signOutUserFailure,
+  signOutUserSuccess,
+  signOutUserStart,
 } from "../../redux/user/userSlice";
 
 import { useDispatch } from "react-redux";
@@ -58,6 +61,7 @@ function Profile() {
   const navigateTo = useNavigate();
 
   // If avatar is updated, then change the previous avatar for the updated one
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -93,13 +97,13 @@ function Profile() {
     );
   };
 
-  // Handle inputs changes
+  // Function that handles inputs changes
 
   const handleChange = (ev: any) => {
     setFormData({ ...formData, [ev.target.id]: ev.target.value });
   };
 
-  // Handle upload form  submit
+  // Function that handles upload form submit
 
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
@@ -128,6 +132,8 @@ function Profile() {
     }
   };
 
+  // Function that handles the delete user span when clicked
+
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
@@ -143,6 +149,7 @@ function Profile() {
         return;
       }
 
+      localStorage.removeItem("persist:root"); // Asegúrate de que 'currentUser' sea la clave correcta
       dispatch(deleteUserSuccess(data));
       navigateTo("/signin");
     } catch (err: any) {
@@ -150,14 +157,38 @@ function Profile() {
     }
   };
 
+  // Confirm delete after clicking 'Delete account' span.
+
   const confirmDelete = () => {
     setConfirmDeleteMessage(true);
+  };
+
+  // Function that handles the sign out action
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("api/auth/signout");
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
+      }
+
+      localStorage.removeItem("persist:root"); // Asegúrate de que 'currentUser' sea la clave correcta
+      dispatch(signOutUserSuccess(data));
+      navigateTo("/");
+    } catch (err: any) {
+      dispatch(signOutUserFailure(err.message));
+    }
   };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7 ">Profile</h1>
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        {/* Image upload */}
+
         <input
           onChange={(ev: any) => {
             setFile(ev.target.files[0]);
@@ -181,6 +212,8 @@ function Profile() {
             className="rounded-full h-24 w-24 object-cover cursor-pointer self-center my-2"
           ></img>
         </div>
+
+        {/* Error handling while uploading image */}
         <p className="text-center text-sm">
           {fileUploadError ? (
             <span className="text-red-700">
@@ -227,12 +260,15 @@ function Profile() {
         </button>
       </form>
 
+      {/* Delete Account, Sign Out span's */}
+
       <div className="my-5 flex justify-between">
         <div className="">
           <span
             onClick={confirmDelete}
             className="text-red-700 cursor-pointer flex flex-col gap-5"
           >
+            {/* If delete account span is clicked, pop this confirmation text */}
             {confirmDeleteMessage ? (
               <span onClick={handleDeleteUser} className="">
                 You sure you want to delete this account?
@@ -244,13 +280,18 @@ function Profile() {
             Delete account
           </span>
         </div>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span className="text-red-700 cursor-pointer" onClick={handleSignOut}>
+          Sign out
+        </span>
       </div>
 
-      <p className="text-red-700 mt-5">{error ? error : ""}</p>
-      <p className="text-green-600">
-        {updateSuccess ? "Profile updated succesfully." : ""}
-      </p>
+      {/* Error messages */}
+      <div>
+        <p className="text-red-700 mt-5">{error ? error : ""}</p>
+        <p className="text-green-600">
+          {updateSuccess ? "Profile updated succesfully." : ""}
+        </p>
+      </div>
     </div>
   );
 }

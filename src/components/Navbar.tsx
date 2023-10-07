@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { TbBuildingEstate } from "react-icons/tb";
 import { useSelector } from "react-redux";
 
 function Navbar() {
@@ -11,9 +12,9 @@ function Navbar() {
       className="shadow-md flex max-[410px]:flex-col max-[410px]:space-y-4 min-[430px]:flex-row
     min-[430px]:space-y-0 items-center justify-between p-3 mx-auto"
     >
-      <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-        <span className="text-slate-500">Menorsito</span>
-        <span className="text-slate-700">States</span>
+      <h1 className="font-bold text-sm sm:text-xl flex flex-wrap items-center gap-3">
+        <TbBuildingEstate />
+        stiratto
       </h1>
       <form className="bg-slate-100 p-2 rounded-lg flex items-center">
         <input

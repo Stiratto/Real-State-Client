@@ -18,6 +18,9 @@ export const userSlice: import("@reduxjs/toolkit").Slice<
     deleteUserStart: () => AnyAction;
     deleteUserSuccess: (payload: string) => AnyAction;
     deleteUserFailure: (payload: string) => AnyAction;
+    signOutUserStart: () => AnyAction;
+    signOutUserSuccess: (payload: string) => AnyAction;
+    signOutUserFailure: (payload: string) => AnyAction;
   }
 >;
 
@@ -30,3 +33,6 @@ export const updateUserFailure: (payload: string) => AnyAction;
 export const deleteUserStart: () => AnyAction;
 export const deleteUserSuccess: (payload: string) => AnyAction;
 export const deleteUserFailure: (payload: string) => AnyAction;
+export const signOutUserStart: () => AnyAction;
+export const signOutUserSuccess: (payload: string) => AnyAction;
+export const signOutUserFailure: (payload: string) => AnyAction;
