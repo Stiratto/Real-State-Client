@@ -16,7 +16,7 @@ function Navbar() {
         <TbBuildingEstate />
         stiratto
       </h1>
-      <form className="bg-slate-100 p-2 rounded-lg flex items-center">
+      <form className="bg-slate-100 p-2 rounded-lg flex items-center space-y-2">
         <input
           type="text"
           placeholder="Search..."
@@ -25,10 +25,10 @@ function Navbar() {
         <FaSearch className="text-slate-500" />
       </form>
       <ol className="gap-4 flex flex-wrap">
-        <li className="hover:underline text-slate-700 ">
+        <li className="hover:underline hover:underline-offset-8 text-slate-700 ">
           <Link to="/">Home</Link>
         </li>
-        <li className="hover:underline  text-slate-700">
+        <li className="hover:underline hover:underline-offset-8  text-slate-700">
           <Link to="/about">About</Link>
         </li>
 
@@ -41,7 +41,7 @@ function Navbar() {
             ></img>
           </Link>
         ) : (
-          <li className="hover:underline text-slate-700">
+          <li className="hover:underline hover:underline-offset-8 text-slate-700">
             <Link to="/signin">Sign In</Link>
           </li>
         )}

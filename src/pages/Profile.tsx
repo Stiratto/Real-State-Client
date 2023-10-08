@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useRef, useState, useEffect } from "react";
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   getDownloadURL,
@@ -258,6 +258,12 @@ function Profile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link
+          to={"/createlisting"}
+          className=" w-full text-center bg-green-600 text-white uppercase p-3 rounded-lg hover:opacity-40"
+        >
+          Create listing
+        </Link>
       </form>
 
       {/* Delete Account, Sign Out span's */}
